@@ -1,0 +1,70 @@
+@startuml economic_simulation_flow
+title Economic Simulation — End-to-End Flow\n(Layered Architecture)
+
+skinparam shadowing false
+skinparam ArrowColor #555555
+skinparam ActivityBorderColor #555555
+skinparam ActivityBackgroundColor #FFFFFF
+skinparam NoteBackgroundColor #FFF9E3
+skinparam TitleFontSize 18
+
+|#E8F1FA|Presentation|
+start
+:User submits **Variable + Delta**;
+:Economic Simulation Interface;
+-> EconomicChange;
+
+|#E9F7EF|Application|
+:Simulation Orchestrator
+dispatches two tasks;
+
+fork
+  |#FEF5E7|Data / Infrastructure|
+  :Retrieve stored
+  **original 1-year result**;
+  note right
+    This layer also owns:
+    * Economic Model Inputs
+    * Variable Values
+    * Model Configuration
+  end note
+  -> OriginalMetricResults;
+fork again
+  |#FDEDEC|Business Logic|
+  :Economic Simulation Service
+  applies the changed variable;
+  :Ray Fair Model
+  solves the changed scenario;
+  -> ChangedMetricResults;
+end fork
+
+|#FDEDEC|Business Logic|
+:Metric Comparison Service
+----
+* compare original vs changed
+* identify metrics that changed
+* compute delta per metric;
+-> ChangedMetricsWithDeltas
+(metric, original, changed, delta);
+
+|#E9F7EF|Application|
+:Orchestrator forwards deltas
+via **LLM Integration**;
+
+|#F4ECF7|LLM (external)|
+:Interpret metric deltas
+in economic terms;
+-> EconomicInterpretation;
+
+|#E9F7EF|Application|
+:Assemble **SimulationResult**
+----
+* ChangedMetricResults
+* metric deltas
+* economic interpretation;
+-> SimulationResult;
+
+|#E8F1FA|Presentation|
+:Format & display result;
+stop
+@enduml
