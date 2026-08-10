@@ -1,0 +1,14 @@
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Uncompressed copies of the packaged CPS data; the engine reads the
+# .csv.gz files, so these are local conveniences only (~85 MB).
+taxcalc/data/cps.csv
+taxcalc/data/cps_weights.csv
