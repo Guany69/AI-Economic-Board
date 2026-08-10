@@ -88,6 +88,34 @@ Supporting analytics feed the Counsel:
 - BEA I-O → sectoral and supply-chain impacts
 - GDPNow → baseline calibration
 
+## MVP Quickstart
+
+The repository contains a working MVP of the core simulation loop
+(variable + delta → [conditional Tax-Calculator → Tax-to-Fair adapter] →
+Ray Fair → stored-baseline comparison → deterministic metric deltas → LLM
+interpretation → persisted SimulationResult). No sudo/Homebrew/Docker needed.
+
+```bash
+scripts/bootstrap.sh        # micromamba toolchain (gfortran + PostgreSQL) + python deps
+scripts/build_fair.sh       # compile the Fair fp binary
+python3 -m pip install -e ".[dev]"
+
+econ baseline-create        # full Fair base run -> ACTIVE baseline in PostgreSQL
+econ serve                  # start the API (terminal 1)
+
+econ variables                                            # list supported levers
+econ simulate COG --type ABSOLUTE --value 25 --wait       # +$25B federal purchases
+econ simulate II_rt_all --type ABSOLUTE --value=-0.02 --wait   # 2pp cut, all brackets
+```
+
+Set `ANTHROPIC_API_KEY` to enable the LLM interpretation step; without it,
+runs finish FAILED at that final step with all deterministic results
+retained. Tests: `python3 -m pytest` (fast suite) and
+`python3 -m pytest -m real_models` (runs the real models). Details in
+`agent_docs/`.
+
 ## Status
 
-Active development. Core simulation loop and AI Counsel architecture are in design; Fair Model integration is the primary near-term milestone.
+Core simulation loop implemented (Fair FP + Tax-Calculator + adapter +
+PostgreSQL persistence + CLI/API). AI Counsel multi-agent architecture,
+BEA I-O, GDPNow calibration, and Outcome → Policy mode are future work.

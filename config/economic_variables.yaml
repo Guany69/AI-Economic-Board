@@ -1,0 +1,329 @@
+# Authoritative economic-variable registry.
+#
+# Every user-facing variable the system accepts is defined here. Nothing in
+# code invents variables, bounds, or units. Unit labels are grounded in the
+# repository's own materials: observed magnitudes in FMFP/Data/fmdata.txt
+# (e.g. D1G ~= 0.1155 -> decimal rate; RS ~= 1.5-6.4 -> percent per annum)
+# and the README policy-lever table.
+#
+# model: FAIR            -> change applied directly in the Fair scenario script
+# model: TAX_CALCULATOR  -> change runs through Tax-Calculator, then the
+#                           explicit Tax-to-Fair adapter, then Fair.
+
+variables:
+  # ---------------- Fair model: government spending ----------------
+  - id: COG
+    label: Federal government purchases of goods
+    model: FAIR
+    fair_variable: COG
+    unit: billions of dollars
+    allowed_change_types: [ABSOLUTE, PERCENT, SET_VALUE]
+    description: Federal government purchases of goods (README government spending lever).
+  - id: COS
+    label: State & local government purchases of goods
+    model: FAIR
+    fair_variable: COS
+    unit: billions of dollars
+    allowed_change_types: [ABSOLUTE, PERCENT, SET_VALUE]
+    description: State and local government purchases of goods.
+
+  # ---------------- Fair model: transfers & grants ----------------
+  - id: TRGHQ
+    label: Federal transfer payments to households
+    model: FAIR
+    fair_variable: TRGHQ
+    unit: billions of dollars
+    allowed_change_types: [ABSOLUTE, PERCENT, SET_VALUE]
+    description: Federal transfer payments to households (deflated units per Fair model; TRGH = TRGHQ*GDPD in fminput.txt).
+  - id: TRSHQ
+    label: State & local transfer payments to households
+    model: FAIR
+    fair_variable: TRSHQ
+    unit: billions of dollars
+    allowed_change_types: [ABSOLUTE, PERCENT, SET_VALUE]
+    description: State and local transfer payments to households.
+  - id: TRGSQ
+    label: Federal grants to state & local governments
+    model: FAIR
+    fair_variable: TRGSQ
+    unit: billions of dollars
+    allowed_change_types: [ABSOLUTE, PERCENT, SET_VALUE]
+    description: Federal grants-in-aid to state and local governments.
+
+  # ---------------- Fair model: government employment ----------------
+  - id: JG
+    label: Federal civilian jobs
+    model: FAIR
+    fair_variable: JG
+    unit: millions of jobs
+    allowed_change_types: [ABSOLUTE, PERCENT, SET_VALUE]
+    description: Number of federal civilian jobs.
+  - id: JS
+    label: State & local government jobs
+    model: FAIR
+    fair_variable: JS
+    unit: millions of jobs
+    allowed_change_types: [ABSOLUTE, PERCENT, SET_VALUE]
+    description: Number of state and local government jobs.
+  - id: JM
+    label: Military jobs
+    model: FAIR
+    fair_variable: JM
+    unit: millions of jobs
+    allowed_change_types: [ABSOLUTE, PERCENT, SET_VALUE]
+    description: Number of military jobs.
+
+  # ---------------- Fair model: subsidies ----------------
+  - id: SUBG
+    label: Federal subsidies
+    model: FAIR
+    fair_variable: SUBG
+    unit: billions of dollars
+    allowed_change_types: [ABSOLUTE, PERCENT, SET_VALUE]
+    description: Federal subsidies less current surplus of government enterprises.
+  - id: SUBS
+    label: State & local subsidies
+    model: FAIR
+    fair_variable: SUBS
+    unit: billions of dollars
+    allowed_change_types: [ABSOLUTE, PERCENT, SET_VALUE]
+    description: State and local subsidies.
+
+  # ---------------- Fair model: tax rates (direct Fair levers) ----------------
+  - id: D1G
+    label: Federal personal income tax rate (average effective)
+    model: FAIR
+    fair_variable: D1G
+    unit: decimal rate
+    allowed_change_types: [ABSOLUTE, PERCENT, SET_VALUE]
+    min_value: -0.5
+    max_value: 0.5
+    description: Average effective federal personal income tax rate (~0.1155 at 2026Q2 in fmdata.txt).
+  - id: D1S
+    label: State & local personal income tax rate
+    model: FAIR
+    fair_variable: D1S
+    unit: decimal rate
+    allowed_change_types: [ABSOLUTE, PERCENT, SET_VALUE]
+    min_value: -0.5
+    max_value: 0.5
+    description: Average effective state and local personal income tax rate.
+  - id: D2G
+    label: Federal corporate profit tax rate
+    model: FAIR
+    fair_variable: D2G
+    unit: decimal rate
+    allowed_change_types: [ABSOLUTE, PERCENT, SET_VALUE]
+    min_value: -1.0
+    max_value: 1.0
+    description: Federal profit tax rate.
+  - id: D2S
+    label: State & local corporate profit tax rate
+    model: FAIR
+    fair_variable: D2S
+    unit: decimal rate
+    allowed_change_types: [ABSOLUTE, PERCENT, SET_VALUE]
+    min_value: -1.0
+    max_value: 1.0
+    description: State and local profit tax rate.
+  - id: D4G
+    label: Employee social security tax rate
+    model: FAIR
+    fair_variable: D4G
+    unit: decimal rate
+    allowed_change_types: [ABSOLUTE, PERCENT, SET_VALUE]
+    min_value: -0.5
+    max_value: 0.5
+    description: Employee social security payroll tax rate.
+  - id: D5G
+    label: Employer social security tax rate
+    model: FAIR
+    fair_variable: D5G
+    unit: decimal rate
+    allowed_change_types: [ABSOLUTE, PERCENT, SET_VALUE]
+    min_value: -0.5
+    max_value: 0.5
+    description: Employer social security payroll tax rate.
+
+  # ---------------- Fair model: other levers ----------------
+  - id: CUST
+    label: Customs duties (tariffs)
+    model: FAIR
+    fair_variable: CUST
+    unit: billions of dollars
+    allowed_change_types: [ABSOLUTE, PERCENT, SET_VALUE]
+    description: Federal customs duties (README tariff-policy lever).
+  - id: RS
+    label: Three-month Treasury bill rate
+    model: FAIR
+    fair_variable: RS
+    unit: percent per annum
+    allowed_change_types: [ABSOLUTE, PERCENT, SET_VALUE]
+    requires_exogenous: true
+    description: >-
+      Three-month Treasury bill rate. Normally determined by the model's Fed
+      reaction function; a user change makes it exogenous for the scenario.
+
+  # ---------------- Tax-Calculator: individual income tax brackets ----------------
+  - id: II_rt1
+    label: Income tax rate, bracket 1
+    model: TAX_CALCULATOR
+    taxcalc_param: II_rt1
+    param_kind: scalar
+    reform_year: 2026
+    unit: decimal rate
+    allowed_change_types: [ABSOLUTE, PERCENT, SET_VALUE]
+    min_value: -1.0
+    max_value: 1.0
+    description: Statutory marginal rate for ordinary-income bracket 1.
+  - id: II_rt2
+    label: Income tax rate, bracket 2
+    model: TAX_CALCULATOR
+    taxcalc_param: II_rt2
+    param_kind: scalar
+    reform_year: 2026
+    unit: decimal rate
+    allowed_change_types: [ABSOLUTE, PERCENT, SET_VALUE]
+    min_value: -1.0
+    max_value: 1.0
+    description: Statutory marginal rate for ordinary-income bracket 2.
+  - id: II_rt3
+    label: Income tax rate, bracket 3
+    model: TAX_CALCULATOR
+    taxcalc_param: II_rt3
+    param_kind: scalar
+    reform_year: 2026
+    unit: decimal rate
+    allowed_change_types: [ABSOLUTE, PERCENT, SET_VALUE]
+    min_value: -1.0
+    max_value: 1.0
+    description: Statutory marginal rate for ordinary-income bracket 3.
+  - id: II_rt4
+    label: Income tax rate, bracket 4
+    model: TAX_CALCULATOR
+    taxcalc_param: II_rt4
+    param_kind: scalar
+    reform_year: 2026
+    unit: decimal rate
+    allowed_change_types: [ABSOLUTE, PERCENT, SET_VALUE]
+    min_value: -1.0
+    max_value: 1.0
+    description: Statutory marginal rate for ordinary-income bracket 4.
+  - id: II_rt5
+    label: Income tax rate, bracket 5
+    model: TAX_CALCULATOR
+    taxcalc_param: II_rt5
+    param_kind: scalar
+    reform_year: 2026
+    unit: decimal rate
+    allowed_change_types: [ABSOLUTE, PERCENT, SET_VALUE]
+    min_value: -1.0
+    max_value: 1.0
+    description: Statutory marginal rate for ordinary-income bracket 5.
+  - id: II_rt6
+    label: Income tax rate, bracket 6
+    model: TAX_CALCULATOR
+    taxcalc_param: II_rt6
+    param_kind: scalar
+    reform_year: 2026
+    unit: decimal rate
+    allowed_change_types: [ABSOLUTE, PERCENT, SET_VALUE]
+    min_value: -1.0
+    max_value: 1.0
+    description: Statutory marginal rate for ordinary-income bracket 6.
+  - id: II_rt7
+    label: Income tax rate, bracket 7 (top)
+    model: TAX_CALCULATOR
+    taxcalc_param: II_rt7
+    param_kind: scalar
+    reform_year: 2026
+    unit: decimal rate
+    allowed_change_types: [ABSOLUTE, PERCENT, SET_VALUE]
+    min_value: -1.0
+    max_value: 1.0
+    description: Statutory marginal rate for the top ordinary-income bracket.
+  - id: II_rt_all
+    label: All ordinary income tax brackets
+    model: TAX_CALCULATOR
+    taxcalc_param: II_rt_all
+    param_kind: composite
+    composite_of: [II_rt1, II_rt2, II_rt3, II_rt4, II_rt5, II_rt6, II_rt7]
+    reform_year: 2026
+    unit: decimal rate
+    allowed_change_types: [ABSOLUTE, PERCENT]
+    min_value: -0.5
+    max_value: 0.5
+    description: >-
+      Composite change to all seven ordinary brackets at once: ABSOLUTE adds
+      the delta to each 2026 statutory rate; PERCENT scales each rate.
+      SET_VALUE is disallowed (one value for seven distinct brackets is ambiguous).
+  - id: STD
+    label: Standard deduction
+    model: TAX_CALCULATOR
+    taxcalc_param: STD
+    param_kind: mars_vector
+    reform_year: 2026
+    unit: dollars
+    allowed_change_types: [ABSOLUTE, PERCENT]
+    description: >-
+      Standard deduction (five MARS filing-status values). ABSOLUTE adds the
+      delta to each filing status's 2026 value; PERCENT scales each.
+      SET_VALUE is disallowed (one value for five statuses is ambiguous).
+  - id: CTC_c
+    label: Child tax credit maximum per child
+    model: TAX_CALCULATOR
+    taxcalc_param: CTC_c
+    param_kind: scalar
+    reform_year: 2026
+    unit: dollars
+    allowed_change_types: [ABSOLUTE, PERCENT, SET_VALUE]
+    description: >-
+      Maximum child tax credit per child. Valid Tax-Calculator reform, but no
+      Tax-to-Fair mapping is defined for credit changes; simulations fail
+      explicitly at the mapping check (by design - mappings are never guessed).
+
+  # ---------------- Tax-Calculator: payroll (FICA) rates ----------------
+  - id: FICA_ss_trt_employee
+    label: Social Security payroll tax rate, employee side
+    model: TAX_CALCULATOR
+    taxcalc_param: FICA_ss_trt_employee
+    param_kind: scalar
+    reform_year: 2026
+    unit: decimal rate
+    allowed_change_types: [ABSOLUTE, PERCENT, SET_VALUE]
+    min_value: -0.5
+    max_value: 0.5
+    description: Employee-side OASDI payroll tax rate.
+  - id: FICA_ss_trt_employer
+    label: Social Security payroll tax rate, employer side
+    model: TAX_CALCULATOR
+    taxcalc_param: FICA_ss_trt_employer
+    param_kind: scalar
+    reform_year: 2026
+    unit: decimal rate
+    allowed_change_types: [ABSOLUTE, PERCENT, SET_VALUE]
+    min_value: -0.5
+    max_value: 0.5
+    description: Employer-side OASDI payroll tax rate.
+  - id: FICA_mc_trt_employee
+    label: Medicare payroll tax rate, employee side
+    model: TAX_CALCULATOR
+    taxcalc_param: FICA_mc_trt_employee
+    param_kind: scalar
+    reform_year: 2026
+    unit: decimal rate
+    allowed_change_types: [ABSOLUTE, PERCENT, SET_VALUE]
+    min_value: -0.5
+    max_value: 0.5
+    description: Employee-side Medicare (HI) payroll tax rate.
+  - id: FICA_mc_trt_employer
+    label: Medicare payroll tax rate, employer side
+    model: TAX_CALCULATOR
+    taxcalc_param: FICA_mc_trt_employer
+    param_kind: scalar
+    reform_year: 2026
+    unit: decimal rate
+    allowed_change_types: [ABSOLUTE, PERCENT, SET_VALUE]
+    min_value: -0.5
+    max_value: 0.5
+    description: Employer-side Medicare (HI) payroll tax rate.

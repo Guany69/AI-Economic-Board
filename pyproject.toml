@@ -1,0 +1,48 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ai-economic-board"
+version = "0.1.0"
+description = "MVP economic simulation system: variable+delta in, Ray Fair (with conditional Tax-Calculator) consequences out"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.115",
+    "uvicorn>=0.30",
+    "SQLAlchemy>=2.0",
+    "alembic>=1.13",
+    "pydantic>=2.7",
+    "pydantic-settings>=2.2",
+    "anthropic>=0.40",
+    "httpx>=0.27",
+    "PyYAML>=6.0",
+    "psycopg[binary]>=3.1",
+    # taxcalc (vendored) runtime deps
+    "numpy",
+    "pandas",
+    "numba",
+    "paramtools>=0.18",
+    "marshmallow",
+    "bokeh",
+    "behresp",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-timeout>=2.3",
+]
+
+[project.scripts]
+econ = "app.presentation.cli.main:main"
+
+[tool.setuptools.packages.find]
+include = ["app*", "taxcalc*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+    "real_models: slow tests that execute the real Fair fp binary and/or Tax-Calculator",
+]
+addopts = "-ra"

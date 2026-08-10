@@ -12,3 +12,9 @@ venv/
 # .csv.gz files, so these are local conveniences only (~85 MB).
 taxcalc/data/cps.csv
 taxcalc/data/cps_weights.csv
+
+# Runtime and generated data (baselines, scratch dirs, embedded Postgres, fp binary)
+data/
+build/
+.mamba/
+.pytest_cache/

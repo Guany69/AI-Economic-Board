@@ -1,0 +1,35 @@
+# Canonical output-metric catalog: the Fair model variables captured from
+# every solve (baseline and scenario) and compared to produce metric deltas.
+# Unit labels are grounded in observed fmdata.txt magnitudes and the README
+# key-output list.
+metrics:
+  - name: GDP
+    label: Gross domestic product (nominal)
+    unit: billions of dollars
+  - name: GDPR
+    label: Gross domestic product (real)
+    unit: billions of real dollars
+  - name: UR
+    label: Unemployment rate
+    unit: decimal rate
+  - name: PCGDPD
+    label: GDP deflator inflation (percentage change, annual rate)
+    unit: percent per annum
+  - name: YD
+    label: Disposable personal income
+    unit: billions of dollars
+  - name: RS
+    label: Three-month Treasury bill rate
+    unit: percent per annum
+  - name: RB
+    label: Bond rate
+    unit: percent per annum
+  - name: RM
+    label: Mortgage rate
+    unit: percent per annum
+  - name: AA
+    label: Total net wealth of households
+    unit: billions of dollars
+  - name: SGP
+    label: Federal government surplus (+) or deficit (-)
+    unit: billions of dollars

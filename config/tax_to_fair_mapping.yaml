@@ -1,0 +1,55 @@
+# Explicit Tax-Calculator -> Fair model mappings.
+#
+# Only conversions derivable from project materials are defined (README:
+# Tax-Calculator "feeds effective tax rate parameters into the Fair Model").
+# Any tax variable NOT listed here fails with TaxToFairMappingError BEFORE
+# Tax-Calculator runs. Mappings are never guessed or invented.
+#
+# Methods (implemented in app/infrastructure/adapters/tax_to_fair.py):
+#
+# EFFECTIVE_RATE_DELTA:
+#   delta = (reform_iitax - base_iitax) / base_agi        (weighted totals)
+#   applied as an ABSOLUTE change to the target Fair variable. AGI (c00100)
+#   is the denominator because iitax/AGI is level-commensurate with Fair's
+#   D1G average effective rate (~0.1155 at 2026Q2). MVP calibration; full
+#   provenance is recorded in conversion_metadata on every run.
+#
+# STATUTORY_RATE_PASSTHROUGH:
+#   the implied absolute statutory-rate delta is applied 1:1 to the target
+#   Fair payroll-rate variable (same object class: decimal payroll rate on
+#   wages). PERCENT / SET_VALUE changes are converted to an implied absolute
+#   delta against the 2026 current-law value first.
+#
+# Quarterly allocation: the derived delta is applied as a constant ABSOLUTE
+# change across all 14 solve quarters (2026Q3-2029Q4).
+
+mappings:
+  - id: iitax_effective_rate_to_d1g
+    method: EFFECTIVE_RATE_DELTA
+    source_variables: [II_rt1, II_rt2, II_rt3, II_rt4, II_rt5, II_rt6, II_rt7, II_rt_all, STD]
+    target_fair_variable: D1G
+    fair_change_type: ABSOLUTE
+    allocation: CONSTANT
+    notes: >-
+      Federal individual income tax reforms map to Fair's average effective
+      federal personal income tax rate via the change in aggregate income tax
+      liability relative to baseline AGI.
+
+  - id: fica_employee_to_d4g
+    method: STATUTORY_RATE_PASSTHROUGH
+    source_variables: [FICA_ss_trt_employee, FICA_mc_trt_employee]
+    target_fair_variable: D4G
+    fair_change_type: ABSOLUTE
+    allocation: CONSTANT
+    notes: >-
+      Employee-side payroll rate deltas pass through to Fair's employee
+      social security tax rate. Caveats (SS taxable maximum not modeled in
+      D4G; SECA bucketing under soi_iitax=false) recorded in metadata.
+
+  - id: fica_employer_to_d5g
+    method: STATUTORY_RATE_PASSTHROUGH
+    source_variables: [FICA_ss_trt_employer, FICA_mc_trt_employer]
+    target_fair_variable: D5G
+    fair_change_type: ABSOLUTE
+    allocation: CONSTANT
+    notes: Employer-side payroll rate deltas pass through to Fair's employer social security tax rate.
